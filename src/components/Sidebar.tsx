@@ -41,7 +41,7 @@ const navigation = [
       { name: "Entradas Geral", href: "/entradas", icon: TrendingUp },
       { name: "Saídas", href: "/saidas", icon: TrendingDown },
       { name: "Comissões", href: "/comissoes", icon: DollarSign },
-      { name: "Salário", href: "/salario", icon: Banknote },
+      { name: "Salário", href: "/salarios", icon: Banknote },
     ]
   },
   {
