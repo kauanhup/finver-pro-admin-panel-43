@@ -14,6 +14,8 @@ interface SalaryRequest {
   id: number;
   employee: string;
   position: string;
+  currentLevel: string;
+  requestedLevel: string;
   currentSalary: number;
   requestedSalary: number;
   reason: string;
@@ -35,8 +37,10 @@ const mockRequests: SalaryRequest[] = [
     id: 1,
     employee: "João Silva",
     position: "Desenvolvedor Frontend",
+    currentLevel: "Desenvolvedor Pleno",
+    requestedLevel: "Desenvolvedor Senior",
     currentSalary: 5000,
-    requestedSalary: 6000,
+    requestedSalary: 7500,
     reason: "Aumento por mérito e novas responsabilidades",
     date: "2024-01-15",
     status: "pending"
@@ -45,30 +49,68 @@ const mockRequests: SalaryRequest[] = [
     id: 2,
     employee: "Maria Santos",
     position: "Designer UX/UI",
-    currentSalary: 4500,
+    currentLevel: "Designer Junior",
+    requestedLevel: "Designer Pleno",
+    currentSalary: 3500,
     requestedSalary: 5200,
     reason: "Especialização em novas ferramentas",
     date: "2024-01-10",
     status: "approved"
+  },
+  {
+    id: 3,
+    employee: "Carlos Oliveira",
+    position: "Desenvolvedor Backend",
+    currentLevel: "Desenvolvedor Junior",
+    requestedLevel: "Desenvolvedor Pleno",
+    currentSalary: 4000,
+    requestedSalary: 6000,
+    reason: "Conclusão de certificações e projetos",
+    date: "2024-01-08",
+    status: "pending"
   }
 ];
 
 const mockLevels: SalaryLevel[] = [
   {
     id: 1,
-    name: "Desenvolvedor Junior",
+    name: "Desenvolvedor Junior (A)",
     minPeople: 3,
-    currentPeople: 2,
+    currentPeople: 4,
     salary: 3500,
-    totalCost: 7000
+    totalCost: 14000
   },
   {
     id: 2,
-    name: "Desenvolvedor Pleno",
+    name: "Desenvolvedor Pleno (B)",
+    minPeople: 2,
+    currentPeople: 5,
+    salary: 6000,
+    totalCost: 30000
+  },
+  {
+    id: 3,
+    name: "Desenvolvedor Senior (C)",
+    minPeople: 1,
+    currentPeople: 2,
+    salary: 9000,
+    totalCost: 18000
+  },
+  {
+    id: 4,
+    name: "Designer Junior (A)",
     minPeople: 2,
     currentPeople: 3,
-    salary: 6000,
-    totalCost: 18000
+    salary: 3200,
+    totalCost: 9600
+  },
+  {
+    id: 5,
+    name: "Designer Pleno (B)",
+    minPeople: 1,
+    currentPeople: 2,
+    salary: 5500,
+    totalCost: 11000
   }
 ];
 
@@ -222,15 +264,29 @@ export default function Salarios() {
           <div className="space-y-4">
             {requests.map((request) => (
               <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{request.employee}</span>
                     <span className="text-sm text-muted-foreground">• {request.position}</span>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    R$ {request.currentSalary.toLocaleString()} → R$ {request.requestedSalary.toLocaleString()}
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Nível Atual:</span>
+                      <Badge variant="outline" className="bg-slate-50">{request.currentLevel}</Badge>
+                    </div>
+                    <span className="text-muted-foreground">→</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Nível Solicitado:</span>
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">{request.requestedLevel}</Badge>
+                    </div>
                   </div>
-                  <div className="text-sm">{request.reason}</div>
+                  <div className="text-sm font-medium">
+                    R$ {request.currentSalary.toLocaleString()} → R$ {request.requestedSalary.toLocaleString()}
+                    <span className="text-green-600 ml-2">
+                      (+R$ {(request.requestedSalary - request.currentSalary).toLocaleString()})
+                    </span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">{request.reason}</div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-muted-foreground">{request.date}</span>
@@ -259,19 +315,49 @@ export default function Salarios() {
           <CardDescription>Configuração dos níveis e custos da equipe</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Team Summary */}
+          <div className="mb-6 p-4 bg-slate-50 rounded-lg border">
+            <h4 className="font-medium mb-3">Resumo da Equipe por Nível</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">
+                  {levels.filter(level => level.name.includes("(A)")).reduce((sum, level) => sum + level.currentPeople, 0)}
+                </div>
+                <div className="text-sm text-muted-foreground">Nível A (Junior)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {levels.filter(level => level.name.includes("(B)")).reduce((sum, level) => sum + level.currentPeople, 0)}
+                </div>
+                <div className="text-sm text-muted-foreground">Nível B (Pleno)</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {levels.filter(level => level.name.includes("(C)")).reduce((sum, level) => sum + level.currentPeople, 0)}
+                </div>
+                <div className="text-sm text-muted-foreground">Nível C (Senior)</div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {levels.map((level) => (
               <div key={level.id} className="border rounded-lg p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <h3 className="font-medium">{level.name}</h3>
-                  <Badge variant={level.currentPeople >= level.minPeople ? "default" : "secondary"}>
-                    {level.currentPeople >= level.minPeople ? "Completo" : "Incompleto"}
-                  </Badge>
+                  <div className="flex gap-2">
+                    {level.name.includes("(A)") && <Badge className="bg-blue-100 text-blue-700 border-blue-200">A</Badge>}
+                    {level.name.includes("(B)") && <Badge className="bg-green-100 text-green-700 border-green-200">B</Badge>}
+                    {level.name.includes("(C)") && <Badge className="bg-purple-100 text-purple-700 border-purple-200">C</Badge>}
+                    <Badge variant={level.currentPeople >= level.minPeople ? "default" : "secondary"}>
+                      {level.currentPeople >= level.minPeople ? "Completo" : "Incompleto"}
+                    </Badge>
+                  </div>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Pessoas:</span>
-                    <span>{level.currentPeople}/{level.minPeople}</span>
+                    <span className="text-muted-foreground">Pessoas Ativas:</span>
+                    <span className="font-medium">{level.currentPeople}/{level.minPeople} mínimo</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Salário:</span>
