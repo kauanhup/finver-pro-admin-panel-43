@@ -282,28 +282,58 @@ export default function Salarios() {
           <CardDescription>Configuração dos níveis e custos da equipe</CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Team Summary */}
-          <div className="mb-6 p-4 bg-muted/30 rounded-lg border">
-            <h4 className="font-medium mb-3">Resumo da Equipe por Nível</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
+          {/* Investment and Team Summary */}
+          <div className="mb-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <span className="text-sm font-medium">Total Investimento</span>
+                </div>
+                <div className="text-2xl font-bold text-green-600">
+                  R$ {totalTeamCost.toLocaleString()}
+                </div>
+                <p className="text-xs text-muted-foreground">Custo mensal da equipe</p>
+              </Card>
+              
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium">Nível A (Inicial)</span>
+                </div>
+                <div className="text-2xl font-bold text-blue-600">
                   {levels.filter(level => level.name.includes("(A)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
-                <div className="text-sm text-muted-foreground">Nível A (Junior)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-secondary-foreground">
+                <p className="text-xs text-muted-foreground">
+                  R$ {levels.filter(level => level.name.includes("(A)")).reduce((sum, level) => sum + level.totalCost, 0).toLocaleString()} mensais
+                </p>
+              </Card>
+              
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium">Nível B (Intermediário)</span>
+                </div>
+                <div className="text-2xl font-bold text-orange-600">
                   {levels.filter(level => level.name.includes("(B)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
-                <div className="text-sm text-muted-foreground">Nível B (Pleno)</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-accent-foreground">
+                <p className="text-xs text-muted-foreground">
+                  R$ {levels.filter(level => level.name.includes("(B)")).reduce((sum, level) => sum + level.totalCost, 0).toLocaleString()} mensais
+                </p>
+              </Card>
+              
+              <Card className="p-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm font-medium">Nível C (Avançado)</span>
+                </div>
+                <div className="text-2xl font-bold text-purple-600">
                   {levels.filter(level => level.name.includes("(C)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
-                <div className="text-sm text-muted-foreground">Nível C (Senior)</div>
-              </div>
+                <p className="text-xs text-muted-foreground">
+                  R$ {levels.filter(level => level.name.includes("(C)")).reduce((sum, level) => sum + level.totalCost, 0).toLocaleString()} mensais
+                </p>
+              </Card>
             </div>
           </div>
 
