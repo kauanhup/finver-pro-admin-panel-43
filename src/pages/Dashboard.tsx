@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatCard } from "@/components/StatCard";
 import { TransactionItem } from "@/components/TransactionItem";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -16,7 +19,12 @@ import {
   Hash,
   Calendar,
   Search,
-  ArrowRight
+  ArrowRight,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Activity,
+  Settings
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +32,21 @@ export default function Dashboard() {
   const [startDate, setStartDate] = useState("2025-01-01");
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [isFiltering, setIsFiltering] = useState(false);
+  const [alerts, setAlerts] = useState([
+    { id: 1, type: 'warning', message: '3 saques pendentes de aprovação', action: 'Ver saques' },
+    { id: 2, type: 'info', message: 'Atualização do sistema programada para amanhã', action: 'Detalhes' },
+    { id: 3, type: 'success', message: 'Meta de vendas de janeiro atingida!', action: 'Relatório' },
+  ]);
+  const [metrics, setMetrics] = useState({
+    totalUsers: 1247,
+    activeUsers: 892,
+    totalDeposits: 485230,
+    totalWithdrawals: 128750,
+    platformBalance: 311160,
+    pendingOperations: 15,
+    conversionRate: 18.5,
+    growthRate: 12.3
+  });
   const { toast } = useToast();
 
   const handleFilter = async () => {
@@ -188,6 +211,124 @@ export default function Dashboard() {
         />
       </section>
 
+      {/* Alertas e Notificações */}
+      <section className="bg-background border border-border rounded-xl p-6 shadow-finver transition-all duration-300 hover:shadow-finver-lg">
+        <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-warning" />
+          Alertas Importantes
+        </h2>
+        
+        <div className="space-y-3">
+          {alerts.map((alert) => (
+            <div key={alert.id} className={`p-4 rounded-lg border flex items-center justify-between ${
+              alert.type === 'warning' ? 'bg-warning/10 border-warning/30' :
+              alert.type === 'info' ? 'bg-info/10 border-info/30' :
+              'bg-success/10 border-success/30'
+            }`}>
+              <div className="flex items-center gap-3">
+                {alert.type === 'warning' && <AlertTriangle className="h-5 w-5 text-warning" />}
+                {alert.type === 'info' && <Activity className="h-5 w-5 text-info" />}
+                {alert.type === 'success' && <CheckCircle className="h-5 w-5 text-success" />}
+                <span className="text-foreground font-medium">{alert.message}</span>
+              </div>
+              <Button variant="outline" size="sm" className="text-xs">
+                {alert.action}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Performance Metrics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border-border bg-background">
+          <CardHeader>
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              Performance da Plataforma
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-foreground-secondary">Taxa de Conversão</span>
+                <span className="text-foreground font-medium">{metrics.conversionRate}%</span>
+              </div>
+              <Progress value={metrics.conversionRate} className="h-2" />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-foreground-secondary">Crescimento Mensal</span>
+                <span className="text-foreground font-medium">{metrics.growthRate}%</span>
+              </div>
+              <Progress value={metrics.growthRate} className="h-2" />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-foreground-secondary">Usuários Ativos</span>
+                <span className="text-foreground font-medium">{((metrics.activeUsers / metrics.totalUsers) * 100).toFixed(1)}%</span>
+              </div>
+              <Progress value={(metrics.activeUsers / metrics.totalUsers) * 100} className="h-2" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border bg-background">
+          <CardHeader>
+            <CardTitle className="text-foreground flex items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              Operações Pendentes
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-background-secondary rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-warning/20 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">Saques Pendentes</p>
+                    <p className="text-sm text-foreground-secondary">Aguardando aprovação</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-warning border-warning/30">
+                  {metrics.pendingOperations}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-background-secondary rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-info/20 flex items-center justify-center">
+                    <Users className="h-5 w-5 text-info" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">Novos Cadastros</p>
+                    <p className="text-sm text-foreground-secondary">Últimas 24h</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-info border-info/30">
+                  25
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-background-secondary rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-success/20 flex items-center justify-center">
+                    <Settings className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-foreground">Sistema</p>
+                    <p className="text-sm text-foreground-secondary">Funcionando normalmente</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="text-success border-success/30">
+                  Online
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Recent Transactions */}
       <section className="bg-background border border-border rounded-xl p-6 shadow-finver transition-all duration-300 hover:shadow-finver-lg">
         <h2 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2">
@@ -216,6 +357,22 @@ export default function Dashboard() {
             type="Comissão Afiliado"
             date="09/01/2025 - 12:15"
             amount="-R$ 450,00"
+            icon={Percent}
+            iconColor="warning"
+            amountColor="warning"
+          />
+          <TransactionItem
+            type="Investimento VIP"
+            date="08/01/2025 - 09:20"
+            amount="+R$ 5.000,00"
+            icon={TrendingUp}
+            iconColor="success"
+            amountColor="success"
+          />
+          <TransactionItem
+            type="Comissão Nivel 2"
+            date="08/01/2025 - 08:15"
+            amount="-R$ 320,00"
             icon={Percent}
             iconColor="warning"
             amountColor="warning"
