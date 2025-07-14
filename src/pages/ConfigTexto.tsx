@@ -30,8 +30,7 @@ export default function ConfigTexto() {
     { categoria: 'textos', chave: 'texto_boas_vindas', valor: 'Bem-vindo à revolução dos investimentos inteligentes', descricao: 'Texto de boas-vindas' },
     { categoria: 'textos', chave: 'texto_sobre_plataforma', valor: 'Nossa IA analisa o mercado 24/7 para encontrar as melhores oportunidades de investimento', descricao: 'Texto sobre a plataforma' },
     { categoria: 'textos', chave: 'call_to_action', valor: 'Comece a Investir Agora', descricao: 'Texto do botão principal' },
-    { categoria: 'marketing', chave: 'convite_whatsapp', valor: '🚀 Descubra a revolução dos investimentos! Ganhe dinheiro com IA enquanto dorme. Cadastre-se com meu código e ganhe bônus: {codigo}', descricao: 'Texto para convite via WhatsApp' },
-    { categoria: 'marketing', chave: 'convite_telegram', valor: '💰 Investimentos automatizados com IA! Lucros diários garantidos. Use meu código: {codigo}', descricao: 'Texto para convite via Telegram' },
+    { categoria: 'marketing', chave: 'convite_geral', valor: '🚀 Finver Pro - Investimentos com IA! Ganhe dinheiro enquanto dorme. Cadastre-se com meu código e ganhe bônus: {codigo}', descricao: 'Texto de convite geral' },
   ]);
 
   const handleSaveConfigs = async (configs: ConfigTexto[], setConfigs: React.Dispatch<React.SetStateAction<ConfigTexto[]>>) => {
