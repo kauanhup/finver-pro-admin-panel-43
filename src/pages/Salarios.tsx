@@ -158,21 +158,21 @@ export default function Salarios() {
   const totalTeamCost = levels.reduce((total, level) => total + level.totalCost, 0);
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="p-4 lg:p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Gestão de Salários</h1>
-          <p className="text-muted-foreground">Gerencie solicitações e níveis salariais da equipe</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Gestão de Salários</h1>
+          <p className="text-muted-foreground">Gerencie solicitações e níveis salariais</p>
         </div>
         
         <Dialog open={isCreateLevelOpen} onOpenChange={setIsCreateLevelOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 w-full sm:w-auto">
               <Plus className="h-4 w-4" />
               Criar Nível
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="w-[95%] max-w-md">
             <DialogHeader>
               <DialogTitle>Criar Novo Nível Salarial</DialogTitle>
               <DialogDescription>
@@ -207,88 +207,52 @@ export default function Salarios() {
         </Dialog>
       </div>
 
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Custo Total da Equipe</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">R$ {totalTeamCost.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">Por mês</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Solicitações Pendentes</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{requests.filter(r => r.status === "pending").length}</div>
-            <p className="text-xs text-muted-foreground">Aguardando aprovação</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Níveis Ativos</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{levels.length}</div>
-            <p className="text-xs text-muted-foreground">Níveis configurados</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Funcionários</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{levels.reduce((total, level) => total + level.currentPeople, 0)}</div>
-            <p className="text-xs text-muted-foreground">Ativos na folha</p>
-          </CardContent>
-        </Card>
-      </div>
-
       {/* Salary Requests */}
       <Card>
         <CardHeader>
-          <CardTitle>Solicitações de Aumento</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Solicitações de Aumento
+          </CardTitle>
           <CardDescription>Pedidos de ajuste salarial da equipe</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {requests.map((request) => (
-              <div key={request.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{request.employee}</span>
+              <div key={request.id} className="flex flex-col lg:flex-row gap-4 p-4 border rounded-lg">
+                <div className="flex-1 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <span className="font-medium text-lg">{request.employee}</span>
                     <span className="text-sm text-muted-foreground">• {request.position}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Nível Atual:</span>
-                      <Badge variant="outline" className="bg-slate-50">{request.currentLevel}</Badge>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 text-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span className="text-muted-foreground font-medium">Atual:</span>
+                      <Badge variant="outline" className="w-fit">{request.currentLevel}</Badge>
                     </div>
-                    <span className="text-muted-foreground">→</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Nível Solicitado:</span>
-                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">{request.requestedLevel}</Badge>
+                    <span className="hidden sm:inline text-muted-foreground">→</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                      <span className="text-muted-foreground font-medium">Solicitado:</span>
+                      <Badge className="w-fit bg-primary/10 text-primary border-primary/20">{request.requestedLevel}</Badge>
                     </div>
                   </div>
-                  <div className="text-sm font-medium">
-                    R$ {request.currentSalary.toLocaleString()} → R$ {request.requestedSalary.toLocaleString()}
-                    <span className="text-green-600 ml-2">
+                  
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm font-medium">
+                    <span>R$ {request.currentSalary.toLocaleString()}</span>
+                    <span className="text-muted-foreground">→</span>
+                    <span>R$ {request.requestedSalary.toLocaleString()}</span>
+                    <span className="text-green-600">
                       (+R$ {(request.requestedSalary - request.currentSalary).toLocaleString()})
                     </span>
                   </div>
-                  <div className="text-sm text-muted-foreground">{request.reason}</div>
+                  
+                  <p className="text-sm text-muted-foreground bg-muted/50 p-2 rounded">
+                    {request.reason}
+                  </p>
                 </div>
-                <div className="flex items-center gap-3">
+                
+                <div className="flex flex-row lg:flex-col items-center lg:items-end gap-3 lg:gap-2 justify-between lg:justify-start">
                   <span className="text-sm text-muted-foreground">{request.date}</span>
                   {getStatusBadge(request.status)}
                   {request.status === "pending" && (
@@ -311,28 +275,31 @@ export default function Salarios() {
       {/* Salary Levels */}
       <Card>
         <CardHeader>
-          <CardTitle>Níveis Salariais</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Níveis Salariais
+          </CardTitle>
           <CardDescription>Configuração dos níveis e custos da equipe</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Team Summary */}
-          <div className="mb-6 p-4 bg-slate-50 rounded-lg border">
+          <div className="mb-6 p-4 bg-muted/30 rounded-lg border">
             <h4 className="font-medium mb-3">Resumo da Equipe por Nível</h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-primary">
                   {levels.filter(level => level.name.includes("(A)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
                 <div className="text-sm text-muted-foreground">Nível A (Junior)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-secondary-foreground">
                   {levels.filter(level => level.name.includes("(B)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
                 <div className="text-sm text-muted-foreground">Nível B (Pleno)</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold text-accent-foreground">
                   {levels.filter(level => level.name.includes("(C)")).reduce((sum, level) => sum + level.currentPeople, 0)}
                 </div>
                 <div className="text-sm text-muted-foreground">Nível C (Senior)</div>
@@ -340,31 +307,31 @@ export default function Salarios() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {levels.map((level) => (
               <div key={level.id} className="border rounded-lg p-4 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-medium">{level.name}</h3>
-                  <div className="flex gap-2">
-                    {level.name.includes("(A)") && <Badge className="bg-blue-100 text-blue-700 border-blue-200">A</Badge>}
-                    {level.name.includes("(B)") && <Badge className="bg-green-100 text-green-700 border-green-200">B</Badge>}
-                    {level.name.includes("(C)") && <Badge className="bg-purple-100 text-purple-700 border-purple-200">C</Badge>}
-                    <Badge variant={level.currentPeople >= level.minPeople ? "default" : "secondary"}>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                  <h3 className="font-medium text-sm lg:text-base">{level.name}</h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {level.name.includes("(A)") && <Badge variant="secondary">A</Badge>}
+                    {level.name.includes("(B)") && <Badge variant="secondary">B</Badge>}
+                    {level.name.includes("(C)") && <Badge variant="secondary">C</Badge>}
+                    <Badge variant={level.currentPeople >= level.minPeople ? "default" : "outline"}>
                       {level.currentPeople >= level.minPeople ? "Completo" : "Incompleto"}
                     </Badge>
                   </div>
                 </div>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Pessoas Ativas:</span>
-                    <span className="font-medium">{level.currentPeople}/{level.minPeople} mínimo</span>
+                    <span className="text-muted-foreground">Pessoas:</span>
+                    <span className="font-medium">{level.currentPeople}/{level.minPeople}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Salário:</span>
                     <span>R$ {level.salary.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between font-medium">
-                    <span>Custo Total:</span>
+                    <span>Total:</span>
                     <span>R$ {level.totalCost.toLocaleString()}</span>
                   </div>
                 </div>
