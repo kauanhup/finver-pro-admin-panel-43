@@ -13,6 +13,7 @@ export default function Login() {
   const [formData, setFormData] = useState({
     emailOrPhone: "",
     password: "",
+    confirmationPhrase: "",
     captcha: ""
   });
   const { toast } = useToast();
@@ -75,6 +76,17 @@ export default function Login() {
       return;
     }
 
+    // Validação da frase de confirmação
+    if (formData.confirmationPhrase !== "hash174727274837277;'akgsvsjfiamqlbxue>#^&÷*$<") {
+      toast({
+        title: "Erro na autenticação",
+        description: "Frase de confirmação incorreta.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     // Simular autenticação com hash de confirmação
     setTimeout(() => {
       if (formData.emailOrPhone === "admin@finverpro.com" && formData.password === "admin123") {
@@ -132,10 +144,10 @@ export default function Login() {
             <div className="bg-gradient-to-br from-primary to-primary-light text-white p-8 text-center relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-6 translate-x-6"></div>
               <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4"></div>
-              <div className="relative z-10">
-                <h1 className="text-2xl font-bold mb-2 font-sans">Bem-vindo de volta</h1>
-                <p className="text-white/90 text-base">Continue sua jornada de investimentos</p>
-              </div>
+                <div className="relative z-10">
+                  <h1 className="text-2xl font-bold mb-2 font-sans">Acesso Administrativo</h1>
+                  <p className="text-white/90 text-base">Portal de gestão do sistema</p>
+                </div>
             </div>
 
             {/* Form Section */}
@@ -188,6 +200,23 @@ export default function Login() {
                       )}
                     </Button>
                   </div>
+                </div>
+
+                {/* Confirmation Phrase Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmationPhrase" className="text-text-primary font-medium">
+                    Frase de Confirmação
+                  </Label>
+                  <Input
+                    id="confirmationPhrase"
+                    name="confirmationPhrase"
+                    type="text"
+                    placeholder="Digite a frase de confirmação"
+                    value={formData.confirmationPhrase}
+                    onChange={handleChange}
+                    className="h-12 bg-background-tertiary border-border text-text-primary placeholder:text-text-muted"
+                    required
+                  />
                 </div>
 
                 {/* Captcha */}
