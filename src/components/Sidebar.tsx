@@ -18,7 +18,9 @@ import {
   Type,
   Image,
   LogOut,
-  Search
+  Search,
+  CreditCard,
+  Shield
 } from "lucide-react";
 
 interface SidebarProps {
@@ -38,6 +40,7 @@ const navigation = [
   {
     title: "Financeiro",
     items: [
+      { name: "Operações", href: "/operacoes", icon: CreditCard },
       { name: "Entradas Geral", href: "/entradas", icon: TrendingUp },
       { name: "Saídas", href: "/saidas", icon: TrendingDown },
       { name: "Comissões", href: "/comissoes", icon: DollarSign },
@@ -53,6 +56,13 @@ const navigation = [
       { name: "Roleta", href: "/roleta", icon: Target },
       { name: "Tarefas", href: "/tarefas", icon: CheckSquare },
       { name: "Checklist", href: "/checklist", icon: ListTodo },
+    ]
+  },
+  {
+    title: "Relatórios",
+    items: [
+      { name: "Relatórios", href: "/relatorios", icon: BarChart3 },
+      { name: "Auditoria", href: "/auditoria", icon: Shield },
     ]
   },
   {

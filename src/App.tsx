@@ -17,6 +17,10 @@ import Imagens from "./pages/Imagens";
 import Seo from "./pages/Seo";
 import ConfigPagamento from "./pages/ConfigPagamento";
 import ConfigTexto from "./pages/ConfigTexto";
+import Operacoes from "./pages/Operacoes";
+import Produtos from "./pages/Produtos";
+import Relatorios from "./pages/Relatorios";
+import Auditoria from "./pages/Auditoria";
 import Salarios from "./pages/Salarios";
 import Login from "./pages/Login";
 import UserLogin from "./pages/user/UserLogin";
@@ -45,6 +49,10 @@ const App = () => (
           <Route path="/seo" element={<Layout><Seo /></Layout>} />
           <Route path="/config-pagamento" element={<Layout><ConfigPagamento /></Layout>} />
           <Route path="/textos" element={<Layout><ConfigTexto /></Layout>} />
+          <Route path="/operacoes" element={<Layout><Operacoes /></Layout>} />
+          <Route path="/produtos" element={<Layout><Produtos /></Layout>} />
+          <Route path="/relatorios" element={<Layout><Relatorios /></Layout>} />
+          <Route path="/auditoria" element={<Layout><Auditoria /></Layout>} />
           <Route path="/salarios" element={<Layout><Salarios /></Layout>} />
           <Route path="/login" element={<Login />} />
           
