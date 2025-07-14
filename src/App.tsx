@@ -15,6 +15,7 @@ import { Saidas } from "./pages/Saidas";
 import Comissoes from "./pages/Comissoes";
 import Imagens from "./pages/Imagens";
 import Seo from "./pages/Seo";
+import ConfigPagamento from "./pages/ConfigPagamento";
 import Login from "./pages/Login";
 import UserLogin from "./pages/user/UserLogin";
 import UserDashboard from "./pages/user/UserDashboard";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/comissoes" element={<Layout><Comissoes /></Layout>} />
           <Route path="/imagens" element={<Layout><Imagens /></Layout>} />
           <Route path="/seo" element={<Layout><Seo /></Layout>} />
+          <Route path="/config-pagamento" element={<Layout><ConfigPagamento /></Layout>} />
           <Route path="/login" element={<Login />} />
           
           {/* User Routes (with user layout) */}
