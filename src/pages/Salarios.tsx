@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, DollarSign, Users, TrendingUp, Calendar } from "lucide-react";
+import { Plus, DollarSign, Users, TrendingUp, Calendar, Edit, Trash2, Check, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SalaryRequest {
@@ -115,9 +115,10 @@ const mockLevels: SalaryLevel[] = [
 ];
 
 export default function Salarios() {
-  const [requests] = useState<SalaryRequest[]>(mockRequests);
+  const [requests, setRequests] = useState<SalaryRequest[]>(mockRequests);
   const [levels, setLevels] = useState<SalaryLevel[]>(mockLevels);
   const [isCreateLevelOpen, setIsCreateLevelOpen] = useState(false);
+  const [editingLevel, setEditingLevel] = useState<SalaryLevel | null>(null);
   const { toast } = useToast();
 
   const handleCreateLevel = (formData: FormData) => {
@@ -139,6 +140,45 @@ export default function Salarios() {
     toast({
       title: "Nível criado",
       description: "Novo nível salarial foi criado com sucesso"
+    });
+  };
+
+  const handleEditLevel = (formData: FormData) => {
+    if (!editingLevel) return;
+    
+    const name = formData.get("name") as string;
+    const minPeople = parseInt(formData.get("minPeople") as string);
+    const salary = parseFloat(formData.get("salary") as string);
+
+    setLevels(levels.map(level => 
+      level.id === editingLevel.id 
+        ? { ...level, name, minPeople, salary, totalCost: level.currentPeople * salary }
+        : level
+    ));
+    setEditingLevel(null);
+    toast({
+      title: "Nível atualizado",
+      description: "Nível salarial foi atualizado com sucesso"
+    });
+  };
+
+  const handleDeleteLevel = (levelId: number) => {
+    setLevels(levels.filter(level => level.id !== levelId));
+    toast({
+      title: "Nível excluído",
+      description: "Nível salarial foi removido com sucesso"
+    });
+  };
+
+  const handleRequestAction = (requestId: number, action: "approved" | "rejected") => {
+    setRequests(requests.map(request => 
+      request.id === requestId 
+        ? { ...request, status: action }
+        : request
+    ));
+    toast({
+      title: action === "approved" ? "Solicitação aprovada" : "Solicitação rejeitada",
+      description: `A solicitação foi ${action === "approved" ? "aprovada" : "rejeitada"} com sucesso`
     });
   };
 
@@ -257,10 +297,22 @@ export default function Salarios() {
                   {getStatusBadge(request.status)}
                   {request.status === "pending" && (
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="text-green-600 border-green-600 hover:bg-green-50">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="text-green-600 border-green-600 hover:bg-green-50"
+                        onClick={() => handleRequestAction(request.id, "approved")}
+                      >
+                        <Check className="h-3 w-3 mr-1" />
                         Aprovar
                       </Button>
-                      <Button size="sm" variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="text-red-600 border-red-600 hover:bg-red-50"
+                        onClick={() => handleRequestAction(request.id, "rejected")}
+                      >
+                        <X className="h-3 w-3 mr-1" />
                         Rejeitar
                       </Button>
                     </div>
@@ -342,13 +394,31 @@ export default function Salarios() {
               <div key={level.id} className="border rounded-lg p-4 space-y-3">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                   <h3 className="font-medium text-sm lg:text-base">{level.name}</h3>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-2 flex-wrap items-center">
                     {level.name.includes("(A)") && <Badge variant="secondary">A</Badge>}
                     {level.name.includes("(B)") && <Badge variant="secondary">B</Badge>}
                     {level.name.includes("(C)") && <Badge variant="secondary">C</Badge>}
                     <Badge variant={level.currentPeople >= level.minPeople ? "default" : "outline"}>
                       {level.currentPeople >= level.minPeople ? "Completo" : "Incompleto"}
                     </Badge>
+                    <div className="flex gap-1">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-6 w-6 p-0"
+                        onClick={() => setEditingLevel(level)}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
+                        onClick={() => handleDeleteLevel(level.id)}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -374,6 +444,66 @@ export default function Salarios() {
               </div>
             ))}
           </div>
+
+          {/* Edit Level Dialog */}
+          <Dialog open={!!editingLevel} onOpenChange={() => setEditingLevel(null)}>
+            <DialogContent className="w-[95%] max-w-md">
+              <DialogHeader>
+                <DialogTitle>Editar Nível Salarial</DialogTitle>
+                <DialogDescription>
+                  Atualize as informações do nível salarial
+                </DialogDescription>
+              </DialogHeader>
+              {editingLevel && (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleEditLevel(formData);
+                }} className="space-y-4">
+                  <div>
+                    <Label htmlFor="edit-name">Nome do Nível</Label>
+                    <Input 
+                      id="edit-name" 
+                      name="name" 
+                      defaultValue={editingLevel.name}
+                      placeholder="Ex: Desenvolvedor Senior" 
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-minPeople">Mínimo de Pessoas</Label>
+                    <Input 
+                      id="edit-minPeople" 
+                      name="minPeople" 
+                      type="number" 
+                      min="1" 
+                      defaultValue={editingLevel.minPeople}
+                      placeholder="3" 
+                      required 
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-salary">Salário Individual (R$)</Label>
+                    <Input 
+                      id="edit-salary" 
+                      name="salary" 
+                      type="number" 
+                      step="0.01" 
+                      defaultValue={editingLevel.salary}
+                      placeholder="5000.00" 
+                      required 
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setEditingLevel(null)}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit">Salvar Alterações</Button>
+                  </div>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
